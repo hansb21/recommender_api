@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "recommender-api"
+version = "0.1.0"
+description = ""
+authors = ["Hans Buss <hans.buss@mailfence.com>"]
+readme = "README.md"
+packages = [{include = "recommender_api", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+flask = "2.2.2"
+connexion = {version = "2.14.1", extras = ["swagger-ui"]}
+numpy = "^1.25.2"
+tqdm = "^4.66.1"
+pandas = "^2.1.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

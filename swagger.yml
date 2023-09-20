@@ -1,0 +1,368 @@
+# swagger.yml
+
+openapi: 3.0.0
+info:
+  title: "RP Flask REST API"
+  description: "An API about people and notes"
+  version: "1.0.0"
+
+servers:
+  - url: "/api"
+
+components:
+  parameters:
+    Context:
+      name: "Context"
+      description: "Context used for recommendation"
+      in: path
+      required: True
+      schema:
+        type: "string"
+    Action:
+      name: "Action"
+      description: "Action used for recommendation"
+      in: path
+      required: True
+      schema:
+        type: "string"
+    itemId:
+      name: "itemId"
+      description: "Id of a item used on the recommendation"
+      in: path
+      required: True
+      schema:
+        type: "string"
+    userId:
+      name: "userId"
+      description: "Id of a user focus of the recommendation"
+      in: path
+      required: True
+      schema:
+        type: "string"
+    date:
+      name: "date"
+      description: "date of creation"
+      in: path
+      required: True
+      schema:
+        type: "string"
+    actionValue:
+      name: "actionValue"
+      description: "value of an action"
+      in: path
+      required: True
+      schema:
+        type: "integer"
+    minScale:
+      name: "minScale"
+      description: "Minimum value of rating scale"
+      in: path
+      required: True
+      schema:
+        type: "integer"
+    maxScale:
+      name: "maxScale"
+      description: "Maximum value of rating scale"
+      in: path
+      required: True
+      schema:
+        type: "integer"
+    nresult:
+      name: "nresult"
+      description: "number of items that shall be recommended"
+      in: path
+      required: True
+      schema:
+        type: "integer"
+    rectype:
+      name: "rectype"
+      description: "type of algorithm of recommendation that will be used"
+      in: path
+      required: True
+      schema:
+        type: "integer"
+
+  responses:
+    NotFound:
+      description: "The specified resource was not found"
+    Unauthorized:
+      description: "Unauthorized"
+    InternalServerError:
+      description: "Internal Server Error"
+    UnprocessableEntity:
+      description: "Unprocessable Entity"
+    BadRequest:
+      description: "Bad Request"
+
+paths:
+  /context:
+    get:
+      operationId: "context.read_all"
+      tags:
+        - "Context"
+      summary: "Read the list of context"
+      responses:
+        "200":
+          description: "Successfully read context list"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  
+    post:
+      operationId: "context.create"
+      tags:
+        - "Context"
+      summary: "Creates a new contex"
+      requestBody:
+        x-body-name: Context
+        required: true 
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - Context
+              properties:
+                Context:
+                  type: string
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+              
+        #parameters:
+        #- $ref: "#/components/parameters/Context"
+      responses:
+        "200": 
+          description: "Successfully createad context"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    
+  /context/{Context}:
+    delete:
+      operationId: "context.delete"
+      tags:
+        - "Context"
+      summary: "Deletes an existing context"
+      parameters:
+        - $ref: "#/components/parameters/Context"
+      responses:
+        "200": 
+          description: "Successfully deleted context"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /action/:
+    get:
+      operationId: "action.read_all"
+      tags:
+        - "Action"
+      summary: "Read the list of Actions"
+      responses:
+        "200":
+          description: "Successfully read action list"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+            #/action/{Context}/{Action}/{userId}/{itemId}/{actionValue}/{minScale}/{maxScale}:
+    post:
+      operationId: "action.create"
+      tags:
+        - "Action"
+      summary: "Create a new action that the user may use for recommendation"
+      requestBody:
+        x-body-name: action
+        required: true 
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Context:
+                  type: string
+                itemId:
+                  type: string
+                userId:
+                  type: string
+                Action:
+                  type: string
+                actionValue:
+                  type: integer
+                minScale:
+                  type: integer
+                maxScale:
+                  type: integer
+                    #parameters:
+                    #  - $ref: "#/components/parameters/itemId"
+                    #  - $ref: "#/components/parameters/userId"
+                    #  - $ref: "#/components/parameters/Context"
+                    #  - $ref: "#/components/parameters/Action"
+                    #  - $ref: "#/components/parameters/actionValue"
+                    #  - $ref: "#/components/parameters/minScale"
+                    #  - $ref: "#/components/parameters/maxScale"
+      responses:
+        "200":
+          description: "Action registered successfully"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /action/{Context}/{Action}/{userId}/{itemId}/{actionValue}/:
+    delete:
+      operationId: "action.delete"
+      tags:
+        - "Action"
+      summary: "Deletes an existing action"
+      parameters:
+        - $ref: "#/components/parameters/itemId"
+        - $ref: "#/components/parameters/userId"
+        - $ref: "#/components/parameters/Context"
+        - $ref: "#/components/parameters/Action"
+        - $ref: "#/components/parameters/actionValue"
+      responses:
+        "200": 
+          description: "Successfully deleted context"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /item:
+  #/{Context}/{userId}/{itemId}/{Action}:
+     post:
+      operationId: "item.create"
+      tags:
+         - "Item"
+      summary: "Created a new item used for recommendation"
+      requestBody:
+        required: true 
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Context:
+                  type: string
+                itemId:
+                  type: string
+                userId:
+                  type: string
+                Action:
+                  type: string
+                    #    parameters:
+                    #      - $ref: "#/components/parameters/itemId"
+                    #      - $ref: "#/components/parameters/userId"
+                    #      - $ref: "#/components/parameters/Context"
+                    #      - $ref: "#/components/parameters/Action"
+      responses:
+        "200":
+          description: "Item registered successfully"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  
+  /item/{Context}/{userId}/{itemId}:
+    delete:
+      operationId: "item.delete"
+      tags:
+        - "Item"
+      summary: "Deletes an existing item used for recommendation"
+      parameters:
+        - $ref: "#/components/parameters/itemId"
+        - $ref: "#/components/parameters/userId"
+        - $ref: "#/components/parameters/Context"
+      responses:
+        "200":
+          description: "Item deleted successfully"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  
+  /item/{Context}/{userId}/:
+    delete:
+      operationId: "item.deleteHistory"
+      tags: 
+      - "Item"
+      summary: "Deletes an user history"
+      parameters:
+        - $ref: "#/components/parameters/userId"
+        - $ref: "#/components/parameters/Context"
+      
+      responses:
+        "200":
+          description: "History deleted successfully"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  
+  /recommendation/{Context}/{userId}/{nresult}/{rectype}:
+    get:
+      operationId: "recommendation.get"
+      tags: 
+      - "Recommendation"
+      summary: "Returns an recommendation of a given type"
+      parameters:
+        - $ref: "#/components/parameters/userId"
+        - $ref: "#/components/parameters/Context"
+        - $ref: "#/components/parameters/nresult"
+        - $ref: "#/components/parameters/rectype"
+      
+      responses:
+        "200":
+          description: "Recommendation returned successfully"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
