@@ -10,6 +10,9 @@ def open_files(file="all"):
     elif file == "user":
         with open("json/user.json", "r") as read_file:
             return json.load(read_file)
+    elif file == "recommendation":
+        with open("json/recommendation.json", "r") as read_file:
+            return json.load(read_file)
     else:
         with open("json/context.json", "r") as read_file:
             CONTEXT = json.load(read_file)
@@ -26,6 +29,9 @@ def save_files(file, content):
             json.dump(content, write_file)
     elif file == "user":
         with open("json/user.json", "w") as write_file:
+            json.dump(content, write_file)
+    elif file == "recommendation":
+        with open("json/recommendation.json", "w") as write_file:
             json.dump(content, write_file)
 
 

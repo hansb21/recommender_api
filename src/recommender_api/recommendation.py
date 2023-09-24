@@ -1,7 +1,7 @@
 # recommendation.py
 import utils
 import json
-from flask import abort
+from flask import abort, jsonify
 import heapq
 import pandas as pd
 import pandas.core
@@ -15,7 +15,7 @@ def get(Context, userId, nresult, rectype):
         pass  # FBC
 
     elif rectype == 1:
-        get_ratingRecommendation(Context, nresult, "teste")
+        return get_ratingRecommendation(Context, nresult, "teste", userId)
 
     else:
         return get_popRecommendation(Context, nresult, "teste")
@@ -35,20 +35,14 @@ def get_popRecommendation(Context, nresult, Action):
     result = rating_count.to_json(orient="split")
     return result
 
-def get_ratingRecommendation(Context, nresult, Action):
-    print(CONTEXT[Context]["actions"][Action])
-    rating_df = pd.DataFrame(CONTEXT[Context]["actions"][Action], columns=["userID", "itemID", "rating"])
-   # rating_df = df.drop(['scale'], axis=1)
-    reader = Reader(rating_scale=(CONTEXT[Context]["actions"][Action]["scale"]))
 
-    data = Dataset.load_from_df(rating_df[["userID", "itemID", "rating"]], reader)
-    print(data)
-# popular = {}
-# print("oi")
-# for item in CONTEXT[Context]["items"]:
-#     popular[item] = CONTEXT[Context]["items"][item][Action]["interactions"]
-#     print("oi 2")
-# most_rated_book = pd.DataFrame(books, columns=['book_id', 'user_id', 'avg_rating', 'no_of_ratings'])
-# poprec = heapq.nlargest(nresult, popular.items(), key=lambda i: i[1])
-
-# return poprec
+def get_ratingRecommendation(Context, nresult, Action, userId):
+    RECOMMENDATION = utils.open_files("recommendation")
+    return_json = {}
+    if Context in RECOMMENDATION.keys():
+        if Action in RECOMMENDATION[Context].keys():
+            if userId in RECOMMENDATION[Context][Action].keys():
+                for item in range(len(RECOMMENDATION[Context][Action][userId][:nresult])):
+                    return_json[f"itemID_{item}"] = RECOMMENDATION[Context][Action][userId][item]
+                print(return_json)
+                return jsonify(return_json)

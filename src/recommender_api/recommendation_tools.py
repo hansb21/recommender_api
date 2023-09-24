@@ -5,8 +5,8 @@ import pandas as pd
 import pandas.core
 from surprise import Dataset, NormalPredictor, Reader
 from surprise.prediction_algorithms import predictions
+import utils
 
-from utils import *
 
 def get_top_n(predictions, n=10):
     """Return the top-N recommendation for each user from a set of predictions.
@@ -34,18 +34,23 @@ def get_top_n(predictions, n=10):
 
     return top_n
 
+
 def get_all_top_n():
     CONTEXT = utils.open_files("context")
-    RECOMMENDATION = {}
+    RECOMMENDATION = dict()
     for c in CONTEXT.keys():
         RECOMMENDATION[c] = {}
         for a in CONTEXT[c]["actions"]:
             RECOMMENDATION[c][a] = {}
-            rating_df = pd.DataFrame(CONTEXT[c]["actions"][a], columns=["userID", "itemID", "rating"])
+            rating_df = pd.DataFrame(
+                CONTEXT[c]["actions"][a], columns=["userID", "itemID", "rating"]
+            )
             reader = Reader(rating_scale=(CONTEXT[c]["actions"][a]["scale"]))
 
-            data = Dataset.load_from_df(rating_df[["userID", "itemID", "rating"]], reader)
-
+            data = Dataset.load_from_df(
+                rating_df[["userID", "itemID", "rating"]], reader
+            )
+            print(rating_df)
             trainset = data.build_full_trainset()
             algo = SVD()
             algo.fit(trainset)
@@ -58,5 +63,6 @@ def get_all_top_n():
             for uid, user_ratings in top_n.items():
                 RECOMMENDATION[c][a][uid] = [iid for (iid, _) in user_ratings]
 
-    with open("json/recommendation.json", "w") as fp:
-        json.dump(RECOMMENDATION, fp)
+    utils.save_files("recommendation", RECOMMENDATION)
+
+get_all_top_n()

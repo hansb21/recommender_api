@@ -23,13 +23,13 @@ def create(action):
             }
 
         else:
-            CONTEXT[action["Context"]]["action"][action["Action"]]["itemID"].append(
+            CONTEXT[action["Context"]]["actions"][action["Action"]]["itemID"].append(
                 action["itemId"]
             )
-            CONTEXT[action["Context"]]["action"][action["Action"]]["userID"].append(
+            CONTEXT[action["Context"]]["actions"][action["Action"]]["userID"].append(
                 action["userId"]
             )
-            CONTEXT[action["Context"]]["action"][action["Action"]]["rating"].append(
+            CONTEXT[action["Context"]]["actions"][action["Action"]]["rating"].append(
                 action["actionValue"]
             )
 
