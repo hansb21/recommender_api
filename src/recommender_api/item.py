@@ -6,16 +6,25 @@ from flask import abort
 CONTEXT, USER = utils.open_files()
 
 
-def create(Context, Action, userId, itemId):
-    if Context in CONTEXT.keys():
-        if itemId not in CONTEXT[Context]["items"].keys():  # Create Item
-            CONTEXT[Context]["items"][itemId] = {
-                Action: {"users": [userId], "interactions": 1}
+def create(item):
+    if item["Context"] in CONTEXT.keys():
+        if (
+            item["itemId"] not in CONTEXT[item["Context"]]["items"].keys()
+        ):  # Create Item
+            CONTEXT[item["Context"]]["items"][item["itemId"]] = {
+                item["Action"]: {"users": [item["userId"]], "interactions": 1}
             }
         else:  # Update existing item
-            CONTEXT[Context]["items"][itemId][Action]["users"].append(userId)
-            CONTEXT[Context]["items"][itemId][Action]["interactions"] += 1
-        USER[userId] = {itemId: Action, "Context": Context}
+            CONTEXT[item["Context"]]["items"][item["itemId"]][item["Action"]][
+                "users"
+            ].append(item["userId"])
+            CONTEXT[item["Context"]]["items"][item["itemId"]][item["Action"]][
+                "interactions"
+            ] += 1
+        USER[item["userId"]] = {
+            item["itemId"]: item["Action"],
+            "Context": item["Context"],
+        }
         utils.save_files("context", CONTEXT)
         utils.save_files("user", USER)
     else:

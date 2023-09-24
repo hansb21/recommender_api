@@ -4,7 +4,6 @@ import json
 from flask import abort
 
 
-
 def read_all():
     CONTEXT = utils.open_files(file="context")
     return list(CONTEXT.values())
@@ -17,7 +16,7 @@ def create(Context):
             "email": Context["email"],
             "name": Context["name"],
             "timestamp": utils.get_timestamp(),
-            "actions": [],
+            "actions": {},
             "items": {},
         }
 
@@ -29,7 +28,7 @@ def create(Context):
 
 def delete(Context):
     CONTEXT = utils.open_files(file="context")
-    if Context.get("Context") in CONTEXT:
+    if Context in CONTEXT:
         CONTEXT.pop(Context)
         utils.save_files("context", CONTEXT)
     else:

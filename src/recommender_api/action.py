@@ -6,32 +6,37 @@ from flask import abort
 
 
 def read_all():
-    pass
+    print("oi")
+    return utils.open_files(file="context")
     # return list(ACTION.values())
 
 
-def create(Context, Action, userId, itemId, actionValue, minScale=0, maxScale=1):
+def create(action):
     CONTEXT = utils.open_files(file="context")
-    if Action["Context"] in CONTEXT.keys():
-        if Action["Action"] not in CONTEXT["Context"]["Action"]:
-            CONTEXT[Action["Context"]][Action["Action"]] = {
-                                    "itemID": [Action["itemId"]],
-                                    "userID": [Action["userId"]],
-                                    "rating": [Action["actionValue"]],
-                                    "scale":  (Action["minScale"], Action["maxScale"])
-                                    }
-            CONTEXT[Context]["Scale"][Action] = (minScale, maxScale)
-      
-        else:
+    if action["Context"] in CONTEXT.keys():
+        if action["Action"] not in CONTEXT[action["Context"]]["actions"]:
+            CONTEXT[action["Context"]]["actions"][action["Action"]] = {
+                "itemID": [action["itemId"]],
+                "userID": [action["userId"]],
+                "rating": [action["actionValue"]],
+                "scale": (action["minScale"], action["maxScale"]),
+            }
 
-            CONTEXT[Context]["action"][Action]["itemID"].append(itemId)
-            CONTEXT[Context]["action"][Action]["userID"].append(userId)
-            CONTEXT[Context]["action"][Action]["rating"].append(actionValue)
+        else:
+            CONTEXT[action["Context"]]["action"][action["Action"]]["itemID"].append(
+                action["itemId"]
+            )
+            CONTEXT[action["Context"]]["action"][action["Action"]]["userID"].append(
+                action["userId"]
+            )
+            CONTEXT[action["Context"]]["action"][action["Action"]]["rating"].append(
+                action["actionValue"]
+            )
 
         utils.save_files("context", CONTEXT)
 
     else:
-        abort(422, f"Unprocessable Entity - Context {Context} dosen't exists")
+        abort(422, f"Unprocessable Entity - Context dosen't exists")
 
 
 def delete(Context, Action):

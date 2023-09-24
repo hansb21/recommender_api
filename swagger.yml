@@ -267,6 +267,7 @@ paths:
          - "Item"
       summary: "Created a new item used for recommendation"
       requestBody:
+        x-body-name: item
         required: true 
         content:
           application/json:
