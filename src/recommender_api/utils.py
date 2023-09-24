@@ -13,6 +13,9 @@ def open_files(file="all"):
     elif file == "recommendation":
         with open("json/recommendation.json", "r") as read_file:
             return json.load(read_file)
+    elif file == "security":
+        with open("json/auth.json", "r") as read_file:
+            return json.load(read_file)
     else:
         with open("json/context.json", "r") as read_file:
             CONTEXT = json.load(read_file)

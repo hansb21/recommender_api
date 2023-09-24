@@ -6,7 +6,6 @@ from flask import abort
 
 
 def read_all():
-    print("oi")
     return utils.open_files(file="context")
     # return list(ACTION.values())
 

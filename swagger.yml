@@ -81,7 +81,7 @@ components:
       required: True
       schema:
         type: "integer"
-
+  
   responses:
     NotFound:
       description: "The specified resource was not found"
@@ -93,6 +93,13 @@ components:
       description: "Unprocessable Entity"
     BadRequest:
       description: "Bad Request"
+  
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: X-Auth
+      in: header
+      x-apikeyInfoFunc: app.apikey_auth
 
 paths:
   /context:
@@ -112,6 +119,8 @@ paths:
           $ref: "#/components/responses/UnprocessableEntity"
         "500":
           $ref: "#/components/responses/InternalServerError"
+      security:
+        - api_key: []
   
     post:
       operationId: "context.create"
@@ -149,6 +158,8 @@ paths:
           $ref: "#/components/responses/UnprocessableEntity"
         "500":
           $ref: "#/components/responses/InternalServerError"
+      security:
+        - api_key: []
     
   /context/{Context}:
     delete:
@@ -169,6 +180,8 @@ paths:
           $ref: "#/components/responses/UnprocessableEntity"
         "500":
           $ref: "#/components/responses/InternalServerError"
+      security:
+        - api_key: []
 
   /action/:
     get:
@@ -187,6 +200,8 @@ paths:
           $ref: "#/components/responses/UnprocessableEntity"
         "500":
           $ref: "#/components/responses/InternalServerError"
+      security:
+        - api_key: []
 
             #/action/{Context}/{Action}/{userId}/{itemId}/{actionValue}/{minScale}/{maxScale}:
     post:
@@ -235,6 +250,9 @@ paths:
           $ref: "#/components/responses/UnprocessableEntity"
         "500":
           $ref: "#/components/responses/InternalServerError"
+      security:
+        - api_key: []
+  
   /action/{Context}/{Action}/{userId}/{itemId}/{actionValue}/:
     delete:
       operationId: "action.delete"
@@ -258,6 +276,8 @@ paths:
           $ref: "#/components/responses/UnprocessableEntity"
         "500":
           $ref: "#/components/responses/InternalServerError"
+      security:
+        - api_key: []
 
   /item:
   #/{Context}/{userId}/{itemId}/{Action}:
@@ -298,6 +318,8 @@ paths:
           $ref: "#/components/responses/UnprocessableEntity"
         "500":
           $ref: "#/components/responses/InternalServerError"
+      security:
+        - api_key: []
   
   /item/{Context}/{userId}/{itemId}:
     delete:
@@ -320,6 +342,8 @@ paths:
           $ref: "#/components/responses/UnprocessableEntity"
         "500":
           $ref: "#/components/responses/InternalServerError"
+      security:
+        - api_key: []
 
   
   /item/{Context}/{userId}/:
@@ -343,6 +367,8 @@ paths:
           $ref: "#/components/responses/UnprocessableEntity"
         "500":
           $ref: "#/components/responses/InternalServerError"
+      security:
+        - api_key: []
   
   /recommendation/{Context}/{userId}/{nresult}/{rectype}:
     get:
@@ -367,3 +393,7 @@ paths:
           $ref: "#/components/responses/UnprocessableEntity"
         "500":
           $ref: "#/components/responses/InternalServerError"
+      security:
+        - api_key: []
+
+
