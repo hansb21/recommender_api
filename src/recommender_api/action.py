@@ -5,12 +5,19 @@ import json
 from flask import abort
 
 
-def read_all():
+def read_all() -> dict:
+    """Return the list of all existing actions
+
+    Returns
+    -------
+    dict
+        A dict containing all the existings actions per context
+    """
     return utils.open_files(file="context")
     # return list(ACTION.values())
 
 
-def create(action):
+def create(action: dict) -> None | tuple:
     CONTEXT = utils.open_files(file="context")
     if action["Context"] in CONTEXT.keys():
         if action["Action"] not in CONTEXT[action["Context"]]["actions"]:
@@ -38,7 +45,7 @@ def create(action):
         abort(422, f"Unprocessable Entity - Context dosen't exists")
 
 
-def delete(Context, Action):
+def delete(Context: str, Action: str) -> None | tuple:
     CONTEXT = utils.open_files(file="context")
     if Context in CONTEXT.keys():
         print(CONTEXT[Context]["actions"])

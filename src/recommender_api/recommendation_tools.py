@@ -8,7 +8,7 @@ from surprise.prediction_algorithms import predictions
 import utils
 
 
-def get_top_n(predictions, n=10):
+def get_top_n(predictions: list, n=10) -> defaultdict:
     """Return the top-N recommendation for each user from a set of predictions.
 
     Args:
@@ -35,7 +35,7 @@ def get_top_n(predictions, n=10):
     return top_n
 
 
-def get_all_top_n():
+def get_all_top_n() -> None:
     CONTEXT = utils.open_files("context")
     RECOMMENDATION = dict()
     for c in CONTEXT.keys():
@@ -64,5 +64,6 @@ def get_all_top_n():
                 RECOMMENDATION[c][a][uid] = [iid for (iid, _) in user_ratings]
 
     utils.save_files("recommendation", RECOMMENDATION)
+
 
 get_all_top_n()

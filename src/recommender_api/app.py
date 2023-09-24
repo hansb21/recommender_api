@@ -6,6 +6,7 @@ from connexion.exceptions import OAuthProblem
 
 TOKEN_DB = utils.open_files(file="security")
 
+
 def apikey_auth(token, required_scopes):
     info = TOKEN_DB.get(token, None)
     if not info:
@@ -13,8 +14,10 @@ def apikey_auth(token, required_scopes):
 
     return info
 
+
 app = connexion.App(__name__, specification_dir="./")
 app.add_api("../../swagger.yml")
+
 
 @app.route("/")
 def home():

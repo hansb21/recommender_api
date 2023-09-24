@@ -4,12 +4,12 @@ import json
 from flask import abort
 
 
-def read_all():
+def read_all() -> list:
     CONTEXT = utils.open_files(file="context")
     return list(CONTEXT.values())
 
 
-def create(Context):
+def create(Context: dict) -> None | tuple:
     CONTEXT = utils.open_files(file="context")
     if Context["Context"] not in CONTEXT:
         CONTEXT[Context["Context"]] = {
@@ -26,7 +26,7 @@ def create(Context):
         abort(422, f"Unprocessable Entity - Context {Context} already exists")
 
 
-def delete(Context):
+def delete(Context: str) -> None | tuple:
     CONTEXT = utils.open_files(file="context")
     if Context in CONTEXT:
         CONTEXT.pop(Context)

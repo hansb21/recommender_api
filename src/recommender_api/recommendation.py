@@ -1,7 +1,7 @@
 # recommendation.py
 import utils
 import json
-from flask import abort, jsonify
+from flask import Response, abort, jsonify
 import heapq
 import pandas as pd
 import pandas.core
@@ -10,7 +10,7 @@ from surprise import Dataset, NormalPredictor, Reader
 CONTEXT = utils.open_files(file="context")
 
 
-def get(Context, userId, nresult, rectype):
+def get(Context: str, userId: str, nresult: int, rectype: int) -> None | dict | str:
     if rectype == 0:
         pass  # FBC
 
@@ -21,7 +21,7 @@ def get(Context, userId, nresult, rectype):
         return get_popRecommendation(Context, nresult, "teste")
 
 
-def get_popRecommendation(Context, nresult, Action):
+def get_popRecommendation(Context: str, nresult: int, Action: str) -> None | str:
     df = pd.DataFrame(
         CONTEXT[Context]["Actions"][Action], columns=["itemID", "ratings"]
     )
@@ -36,13 +36,18 @@ def get_popRecommendation(Context, nresult, Action):
     return result
 
 
-def get_ratingRecommendation(Context, nresult, Action, userId):
+def get_ratingRecommendation(
+    Context: str, nresult: int, Action: str, userId: str
+) -> None | dict:
     RECOMMENDATION = utils.open_files("recommendation")
     return_json = {}
     if Context in RECOMMENDATION.keys():
         if Action in RECOMMENDATION[Context].keys():
             if userId in RECOMMENDATION[Context][Action].keys():
-                for item in range(len(RECOMMENDATION[Context][Action][userId][:nresult])):
-                    return_json[f"itemID_{item}"] = RECOMMENDATION[Context][Action][userId][item]
-                print(return_json)
-                return jsonify(return_json)
+                for item in range(
+                    len(RECOMMENDATION[Context][Action][userId][:nresult])
+                ):
+                    return_json[f"itemID_{item}"] = RECOMMENDATION[Context][Action][
+                        userId
+                    ][item]
+                return return_json
