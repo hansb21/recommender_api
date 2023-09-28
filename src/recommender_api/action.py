@@ -41,6 +41,8 @@ def create(action: dict) -> None | tuple:
 
         utils.save_files("context", CONTEXT)
 
+        return (200, "Sucessfully created action")
+
     else:
         abort(422, f"Unprocessable Entity - Context dosen't exists")
 
@@ -55,6 +57,7 @@ def delete(Context: str, Action: str) -> None | tuple:
             CONTEXT[Context]["actions"].remove(Action)
 
         utils.save_files("context", CONTEXT)
+        return (200, "Sucessfully deleted action")
 
     else:
         abort(422, f"Unprocessable Entity - Context {Context} dosen't exists")

@@ -27,6 +27,7 @@ def create(item: dict) -> None | tuple:
         }
         utils.save_files("context", CONTEXT)
         utils.save_files("user", USER)
+        return (200, "Sucessfully created item")
     else:
         abort(422, f"Unprocessable Entity - Context dosen't exists")
 
@@ -56,24 +57,10 @@ def delete(Context: str, userId: str, itemId: str) -> None | tuple:
 
     utils.save_files("context", CONTEXT)
     utils.save_files("user", USER)
+    return (200, "Sucessfully deleted item")
 
 
 def deleteHistory(Context: str, userId: str) -> None | tuple:
-    if Context in CONTEXT.keys():
-        for items in CONTEXT[Context]["items"].keys():
-            if userId in CONTEXT[Context]["items"][items]["actions"]:
-                CONTEXT[Context]["items"][items]["action"]["users"].pop(userId)
-                CONTEXT[Context]["items"][items]["action"]["interactions"] -= 1
-            else:
-                abort(422, f"Unprocessable Entity - User {userId} dosen't exists")
-    else:
-        abort(422, f"Unprocessable Entity - Context {Context}dosen't exists")
-
-    if userId in USER.keys():
-        if USER[userId]["Context"] == Context:
-            del USER[userId]
-    else:
-        abort(422, f"Unprocessable Entity - User {userId} dosen't exists")
-
-    utils.save_files("context", CONTEXT)
-    utils.save_files("user", USER)
+    for itemId in CONTEXT[Context]["items"]:
+        delete(Context, userId, itemId)
+    return (200, "Sucessfully deleted user history")
