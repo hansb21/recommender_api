@@ -216,21 +216,44 @@ paths:
           application/json:
             schema:
               type: object
+                # additionalProperties:
+                #type: object
               properties:
-                Context:
+                Context: 
                   type: string
-                itemId:
+                Action: 
                   type: string
-                userId:
-                  type: string
-                Action:
-                  type: string
-                actionValue:
+                minScale: 
                   type: integer
-                minScale:
+                  format: int32
+                maxScale: 
                   type: integer
-                maxScale:
-                  type: integer
+                  format: int32
+                itemIds: 
+                  type: array
+                  properties: 
+                    itemId: 
+                      type: array
+                      items: 
+                        type: object
+                        properties: 
+                          userId: 
+                            type: integer
+              format: int32 
+                #   Context:
+                #    type: string
+                #  itemIds:
+                #    type: object
+                #  userId:
+                #    type: string
+                #  Action:
+                #    type: string
+                #  actionValue:
+                #    type: integer
+                #  minScale:
+                #    type: integer
+                #  maxScale:
+                #    type: integer
                     #parameters:
                     #  - $ref: "#/components/parameters/itemId"
                     #  - $ref: "#/components/parameters/userId"

@@ -18,36 +18,42 @@ def read_all() -> dict:
 
 
 def create(action: dict) -> None | tuple:
+    print(action)
     CONTEXT = utils.open_files(file="context")
     if action["Context"] in CONTEXT.keys():
         if action["Action"] not in CONTEXT[action["Context"]]["actions"]:
             CONTEXT[action["Context"]]["actions"][action["Action"]] = {
-                "itemID": [action["itemId"]],
-                "userID": [action["userId"]],
-                "rating": [action["actionValue"]],
+                "itemID": [],
+                "userID": [],
+                "rating": [],
                 "scale": (action["minScale"], action["maxScale"]),
             }
-
-        else:
-            CONTEXT[action["Context"]]["actions"][action["Action"]]["itemID"].append(
-                action["itemId"]
-            )
-            CONTEXT[action["Context"]]["actions"][action["Action"]]["userID"].append(
-                action["userId"]
-            )
-            CONTEXT[action["Context"]]["actions"][action["Action"]]["rating"].append(
-                action["actionValue"]
-            )
+        print("item")
+        for item in action["itemIds"]:
+            print("user")
+            for user, rate in item.items():
+                print("rate")
+                CONTEXT[action["Context"]]["actions"][action["Action"]][
+                    "itemID"
+                ].append(item)
+                CONTEXT[action["Context"]]["actions"][action["Action"]][
+                    "userID"
+                ].append(user)
+                CONTEXT[action["Context"]]["actions"][action["Action"]][
+                    "rating"
+                ].append(rate)
 
         utils.save_files("context", CONTEXT)
 
-        return (200, "Sucessfully created action")
+        #return (200, "Sucessfully created action")
 
     else:
         abort(422, f"Unprocessable Entity - Context dosen't exists")
 
 
-def delete(Context: str, Action: str) -> None | tuple:
+def delete(
+    Context: str, Action: str, userId: str, itemId: str, actionValue: int
+) -> None | tuple:
     CONTEXT = utils.open_files(file="context")
     if Context in CONTEXT.keys():
         print(CONTEXT[Context]["actions"])
