@@ -47,10 +47,11 @@ def get_all_top_n() -> None:
             )
             reader = Reader(rating_scale=(CONTEXT[c]["actions"][a]["scale"]))
 
+            print(rating_df)
+            print(reader)
             data = Dataset.load_from_df(
                 rating_df[["userID", "itemID", "rating"]], reader
             )
-            print(rating_df)
             trainset = data.build_full_trainset()
             algo = SVD()
             algo.fit(trainset)
