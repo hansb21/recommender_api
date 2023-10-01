@@ -21,7 +21,6 @@ def create(Context: dict) -> None | tuple:
         }
 
         utils.save_files("context", CONTEXT)
-        return (200, "Sucessfully created context")
     else:
         abort(422, f"Unprocessable Entity - Context {Context} already exists")
 
@@ -31,6 +30,5 @@ def delete(Context: str) -> None | tuple:
     if Context in CONTEXT:
         CONTEXT.pop(Context)
         utils.save_files("context", CONTEXT)
-        return (200, "Sucessfully deleted context")
     else:
         abort(422, f"Unprocessable Entity - Context {Context} doesn't exists")
