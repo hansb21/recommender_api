@@ -18,7 +18,6 @@ def read_all() -> dict:
 
 
 def create(action: dict) -> None | tuple:
-    print(action)
     CONTEXT = utils.open_files(file="context")
     if action["Context"] in CONTEXT.keys():
         if action["Action"] not in CONTEXT[action["Context"]]["actions"]:
@@ -28,11 +27,10 @@ def create(action: dict) -> None | tuple:
                 "rating": [],
                 "scale": (action["minScale"], action["maxScale"]),
             }
-        print("item")
-        for item in action["itemIds"]:
-            print("user")
-            for user, rate in item.items():
-                print("rate")
+        for item in action["itemIds"][0]:
+            for user, rate in action["itemIds"][0][item][0].items():
+                print(item)
+                print(rate)
                 CONTEXT[action["Context"]]["actions"][action["Action"]][
                     "itemID"
                 ].append(item)
@@ -45,7 +43,7 @@ def create(action: dict) -> None | tuple:
 
         utils.save_files("context", CONTEXT)
 
-        #return (200, "Sucessfully created action")
+        # return (200, "Sucessfully created action")
 
     else:
         abort(422, f"Unprocessable Entity - Context dosen't exists")
