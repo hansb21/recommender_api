@@ -18,6 +18,7 @@ def create(Context: dict) -> None | tuple:
             "timestamp": utils.get_timestamp(),
             "actions": {},
             "items": {},
+            "Metrics": []
         }
 
         utils.save_files("context", CONTEXT)
@@ -32,3 +33,12 @@ def delete(Context: str) -> None | tuple:
         utils.save_files("context", CONTEXT)
     else:
         abort(422, f"Unprocessable Entity - Context {Context} doesn't exists")
+
+def createScale(Context: dict) -> None | tuple:
+    CONTEXT = utils.open_files(file="context")
+    if Context["Context"] in CONTEXT:
+        for i in Context["Units"]:
+            CONTEXT[Context["Context"]]["Metrics"].append(i)
+
+    print(CONTEXT[Context["Context"]]["Metrics"])
+    utils.save_files("context", CONTEXT)
