@@ -182,6 +182,51 @@ paths:
           $ref: "#/components/responses/InternalServerError"
       security:
         - api_key: []
+  /metric/:
+    post:
+      operationId: "context.createScale"
+      tags:
+        - "Context"
+      summary: "Create a new scale that the user may use for recommendation"
+      requestBody:
+        x-body-name: Context
+        required: true 
+        content:
+          application/json:
+            schema:
+              type: object
+              # additionalProperties:
+              #type: object
+              properties:
+                Context: 
+                  type: string
+                Units: 
+                  type: array
+                  items: 
+                    type: object
+                    properties: 
+                      Unit: 
+                        type: string
+                      minScale: 
+                        type: integer
+                        format: int32
+                      maxScale: 
+                        type: integer
+                        format: int32
+      
+      responses:
+        "200":
+          description: "Scale created successfully"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      security:
+        - api_key: []
 
   /action/:
     get:
@@ -209,6 +254,7 @@ paths:
       tags:
         - "Action"
       summary: "Create a new action that the user may use for recommendation"
+      
       requestBody:
         x-body-name: action
         required: true 
@@ -216,30 +262,86 @@ paths:
           application/json:
             schema:
               type: object
-                # additionalProperties:
-                #type: object
+              # additionalProperties:
+              #type: object
               properties:
-                Context: 
-                  type: string
                 Action: 
                   type: string
-                minScale: 
-                  type: integer
-                  format: int32
-                maxScale: 
-                  type: integer
-                  format: int32
+                Unit: 
+                    type: string
+                Context: 
+                  type: string
                 itemIds: 
                   type: array
-                  properties: 
-                    itemId: 
-                      type: array
-                      items: 
-                        type: object
-                        properties: 
-                          userId: 
-                            type: integer
-              format: int32 
+                  items: 
+                    type: object
+                    properties: 
+                      itemId: 
+                        type: array
+                        items: 
+                          type: object
+                          properties: 
+                            user: 
+                              type: string
+                            value: 
+                              type: integer
+                              format: int32
+                    
+                    #itemId1: 
+                    #  type: array
+                    #  items: 
+                    #    type: object
+                    #    properties: 
+                    #      user: 
+                    #        type: string
+                    #        example: iduser
+                    #      value: 
+                    #        type: integer
+                    #        format: int32
+                    #        example: 4
+                    #  example: [
+                    #      user: iduser
+                    #      value: 4
+                    #  ]
+                  
+                  #itemId1: [
+                  #    user: iduser
+                  #    value: 4
+                  #    user: iduser
+                  #    value: 4
+                  #    user: iduser
+                  #    value: 4
+                  #]
+                
+
+
+
+                            #schema:
+                            #  type: object
+                            #    # additionalProperties:
+                            #    #type: object
+                            #  properties:
+                            #    Context: 
+                            #      type: string
+                            #    Action: 
+                            #      type: string
+                            #    minScale: 
+                            #      type: integer
+                            #      format: int32
+                            #    maxScale: 
+                            #      type: integer
+                            #      format: int32
+                            #    itemIds: 
+                            #      type: array
+                            #      properties: 
+                            #        itemId: 
+                            #          type: array
+                            #          items: 
+                            #            type: object
+                            #            properties: 
+                            #              userId: 
+                            #                type: integer
+                            #  format: int32 
                 #   Context:
                 #    type: string
                 #  itemIds:
