@@ -18,15 +18,20 @@ def read_all() -> dict:
 
 
 def create(action: dict) -> None | tuple:
+    print(action)
     CONTEXT = utils.open_files(file="context")
     if action["Context"] in CONTEXT.keys():
         if action["Action"] not in CONTEXT[action["Context"]]["actions"]:
             CONTEXT[action["Context"]]["actions"][action["Action"]] = {
                 "itemID": [],
                 "userID": [],
-                "rating": [],
-                "scale": (action["minScale"], action["maxScale"]),
-            }
+                "rating": [] 
+                }
+            for metric in CONTEXT[action["Context"]]["Metrics"]:
+                print(metric)
+                if metric["Unit"] == action["Unit"]:
+                    CONTEXT[action["Context"]]["actions"][action["Action"]]["scale"] = (metric["minScale"], metric["maxScale"])
+
         for item in action["itemIds"][0]:
             for user, rate in action["itemIds"][0][item][0].items():
                 print(item)
