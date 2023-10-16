@@ -494,7 +494,26 @@ paths:
           $ref: "#/components/responses/InternalServerError"
       security:
         - api_key: []
-  
+  /recommendation/:
+    get:
+      operationId: "recommendation.get_types"
+      tags:
+        - "Recommendation"
+      summary: "Returns the list of avaliable recommendation types"
+      responses:
+        "200":
+          description: "Recommendation types returned successfully"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      security:
+        - api_key: []
+
   /recommendation/{Context}/{userId}/{nresult}/{rectype}:
     get:
       operationId: "recommendation.get"

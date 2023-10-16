@@ -10,6 +10,10 @@ from surprise import Dataset, NormalPredictor, Reader
 CONTEXT = utils.open_files(file="context")
 
 
+def get_types():
+    return {"rectypes": {0: "Popularity", 1: {"Ranking": {0: "SVD"}}}}
+
+
 def get(Context: str, userId: str, nresult: int, rectype: int) -> None | dict | str:
     if rectype == 0:
         pass  # FBC
