@@ -8,28 +8,14 @@ CONTEXT, USER = utils.open_files()
 
 def create(item: dict) -> None | tuple:
     if item["Context"] in CONTEXT.keys():
-        if (
-            item["itemId"] not in CONTEXT[item["Context"]]["items"].keys()
-        ):  # Create Item
-            CONTEXT[item["Context"]]["items"][item["itemId"]] = {
-                item["Action"]: {"users": [item["userId"]], "interactions": 1}
-            }
-        else:  # Update existing item
-            CONTEXT[item["Context"]]["items"][item["itemId"]][item["Action"]][
-                "users"
-            ].append(item["userId"])
-            CONTEXT[item["Context"]]["items"][item["itemId"]][item["Action"]][
-                "interactions"
-            ] += 1
-        USER[item["userId"]] = {
-            item["itemId"]: item["Action"],
-            "Context": item["Context"],
-        }
-        utils.save_files("context", CONTEXT)
-        utils.save_files("user", USER)
-        return (200, "Sucessfully created item")
-    else:
-        abort(422, f"Unprocessable Entity - Context dosen't exists")
+        for i in item["itemIds"]:
+            print(i)
+            if i["itemId"] not in CONTEXT[item["Context"]]["items"].keys():
+                CONTEXT[item["Context"]]["items"][i["itemId"]] = {}
+            for key, value in i.items():
+                CONTEXT[item["Context"]]["items"][i["itemId"]][key] = value
+
+    utils.save_files("context", CONTEXT)
 
 
 def delete(Context: str, userId: str, itemId: str) -> None | tuple:

@@ -419,19 +419,17 @@ paths:
             schema:
               type: object
               properties:
-                Context:
+                Context: 
                   type: string
-                itemId:
-                  type: string
-                userId:
-                  type: string
-                Action:
-                  type: string
-                    #    parameters:
-                    #      - $ref: "#/components/parameters/itemId"
-                    #      - $ref: "#/components/parameters/userId"
-                    #      - $ref: "#/components/parameters/Context"
-                    #      - $ref: "#/components/parameters/Action"
+                itemIds: 
+                  type: array
+                  items: 
+                    type: object
+                    required: [itemId]
+                    properties: 
+                      itemId: 
+                        type: string
+
       responses:
         "200":
           description: "Item registered successfully"
