@@ -1,6 +1,6 @@
 from collections import defaultdict
 import json
-from surprise import Dataset, SVD
+from surprise import CoClustering, Dataset, SVD, KNNBasic
 import pandas as pd
 import pandas.core
 from surprise import Dataset, NormalPredictor, Reader
@@ -36,14 +36,17 @@ def get_top_n(predictions: list, n=10) -> defaultdict:
 
 
 def get_all_top_n() -> None:
-    CONTEXT = utils.open_files("context")
+    ACTION = utils.open_files("action")
     RECOMMENDATION = dict()
-    for c in CONTEXT.keys():
+    for c in ACTION.keys():
         RECOMMENDATION[c] = {}
-        for a in CONTEXT[c]["actions"]:
+        for a in ACTION[c]["actions"]:
+            RECOMMENDATION[c][a] = {}
+
+            # for algo in [s
             RECOMMENDATION[c][a] = {}
             rating_df = pd.DataFrame(
-                CONTEXT[c]["actions"][a], columns=["userID", "itemID", "rating"]
+                ACTION[c]["actions"][a], columns=["userID", "itemID", "rating"]
             )
             reader = Reader(rating_scale=(CONTEXT[c]["actions"][a]["scale"]))
 
@@ -52,6 +55,8 @@ def get_all_top_n() -> None:
             data = Dataset.load_from_df(
                 rating_df[["userID", "itemID", "rating"]], reader
             )
+
+            # SDV
             trainset = data.build_full_trainset()
             algo = SVD()
             algo.fit(trainset)
@@ -60,9 +65,36 @@ def get_all_top_n() -> None:
             predictions = algo.test(testset)
 
             top_n = get_top_n(predictions, n=10)
-
+            RECOMMENDATION[c][a][0] = {}
             for uid, user_ratings in top_n.items():
-                RECOMMENDATION[c][a][uid] = [iid for (iid, _) in user_ratings]
+                RECOMMENDATION[c][a][0][uid] = [iid for (iid, _) in user_ratings]
+
+            # CoCLuresting
+
+            trainset = data.build_full_trainset()
+            algo = CoClustering()
+            algo.fit(trainset)
+
+            testset = trainset.build_anti_testset()
+            predictions = algo.test(testset)
+
+            top_n = get_top_n(predictions, n=10)
+            RECOMMENDATION[c][a][1] = {}
+            for uid, user_ratings in top_n.items():
+                RECOMMENDATION[c][a][1][uid] = [iid for (iid, _) in user_ratings]
+
+            # KNNBasic
+            trainset = data.build_full_trainset()
+            algo = KNNBasic()
+            algo.fit(trainset)
+
+            testset = trainset.build_anti_testset()
+            predictions = algo.test(testset)
+
+            top_n = get_top_n(predictions, n=10)
+            RECOMMENDATION[c][a][2] = {}
+            for uid, user_ratings in top_n.items():
+                RECOMMENDATION[c][a][2][uid] = [iid for (iid, _) in user_ratings]
 
     utils.save_files("recommendation", RECOMMENDATION)
 
