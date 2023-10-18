@@ -20,33 +20,39 @@ def read_all() -> dict:
 def create(action: dict) -> None | tuple:
     print(action)
     CONTEXT = utils.open_files(file="context")
+    ACTION = utils.open_files(file="action")
     if action["Context"] in CONTEXT.keys():
+        if action["Context"] not in ACTION.keys():
+            ACTION[action["Context"]] = {} 
+            ACTION[action["Context"]]["actions"] = {}
         if action["Action"] not in CONTEXT[action["Context"]]["actions"]:
-            CONTEXT[action["Context"]]["actions"][action["Action"]] = {
+            CONTEXT[action["Context"]]["actions"] = action["Action"]
+            ACTION[action["Context"]]["actions"][action["Action"]] = {
                 "itemID": [],
                 "userID": [],
-                "rating": [] 
-                }
+                "rating": [],
+            }
             for metric in CONTEXT[action["Context"]]["Metrics"]:
-                print(metric)
                 if metric["Unit"] == action["Unit"]:
-                    CONTEXT[action["Context"]]["actions"][action["Action"]]["scale"] = (metric["minScale"], metric["maxScale"])
+                    ACTION[action["Context"]]["actions"][action["Action"]]["scale"] = (
+                        metric["minScale"],
+                        metric["maxScale"],
+                    )
 
         for item in action["itemIds"][0]:
             for user, rate in action["itemIds"][0][item][0].items():
-                print(item)
-                print(rate)
-                CONTEXT[action["Context"]]["actions"][action["Action"]][
+                ACTION[action["Context"]]["actions"][action["Action"]][
                     "itemID"
                 ].append(item)
-                CONTEXT[action["Context"]]["actions"][action["Action"]][
+                ACTION[action["Context"]]["actions"][action["Action"]][
                     "userID"
                 ].append(user)
-                CONTEXT[action["Context"]]["actions"][action["Action"]][
+                ACTION[action["Context"]]["actions"][action["Action"]][
                     "rating"
                 ].append(rate)
 
         utils.save_files("context", CONTEXT)
+        utils.save_files("action", ACTION)
 
         # return (200, "Sucessfully created action")
 
@@ -58,14 +64,15 @@ def delete(
     Context: str, Action: str, userId: str, itemId: str, actionValue: int
 ) -> None | tuple:
     CONTEXT = utils.open_files(file="context")
+    ACTION = utils.open_files(file="action")
     if Context in CONTEXT.keys():
-        print(CONTEXT[Context]["actions"])
-        if Action not in CONTEXT[Context]["actions"]:
+        if Action not in ACTION[Context]["actions"]:
             abort(422, f"Unprocessable Entity - Action {Action} dosen't exists")
         else:
-            CONTEXT[Context]["actions"].remove(Action)
+            ACTION[Context]["actions"].remove(Action)
 
         utils.save_files("context", CONTEXT)
+        utils.save_files("action", ACTION)
         return (200, "Sucessfully deleted action")
 
     else:
