@@ -7,6 +7,12 @@ def open_files(file="all"):
     if file == "context":
         with open("json/context.json", "r") as read_file:
             return json.load(read_file)
+    if file == "action":
+        with open("json/action.json", "r") as read_file:
+            return json.load(read_file)
+    if file == "item":
+        with open("json/item.json", "r") as read_file:
+            return json.load(read_file)
     elif file == "user":
         with open("json/user.json", "r") as read_file:
             return json.load(read_file)
@@ -35,6 +41,12 @@ def save_files(file, content):
             json.dump(content, write_file)
     elif file == "recommendation":
         with open("json/recommendation.json", "w") as write_file:
+            json.dump(content, write_file)
+    elif file == "action":
+        with open("json/action.json", "w") as write_file:
+            json.dump(content, write_file)
+    elif file == "item":
+        with open("json/item.json", "w") as write_file:
             json.dump(content, write_file)
 
 
