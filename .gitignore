@@ -124,4 +124,6 @@ ENV/
 env.bak/
 venv.bak/
 
+#json files
 auth.json
+json/ 
