@@ -452,7 +452,6 @@ paths:
       summary: "Deletes an existing item used for recommendation"
       parameters:
         - $ref: "#/components/parameters/itemId"
-        - $ref: "#/components/parameters/userId"
         - $ref: "#/components/parameters/Context"
       responses:
         "200":
