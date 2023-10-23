@@ -23,7 +23,7 @@ def create(action: dict) -> None | tuple:
     ACTION = utils.open_files(file="action")
     if action["Context"] in CONTEXT.keys():
         if action["Context"] not in ACTION.keys():
-            ACTION[action["Context"]] = {} 
+            ACTION[action["Context"]] = {}
             ACTION[action["Context"]]["actions"] = {}
         if action["Action"] not in CONTEXT[action["Context"]]["actions"]:
             CONTEXT[action["Context"]]["actions"] = action["Action"]
@@ -41,15 +41,15 @@ def create(action: dict) -> None | tuple:
 
         for item in action["itemIds"][0]:
             for user, rate in action["itemIds"][0][item][0].items():
-                ACTION[action["Context"]]["actions"][action["Action"]][
-                    "itemID"
-                ].append(item)
-                ACTION[action["Context"]]["actions"][action["Action"]][
-                    "userID"
-                ].append(user)
-                ACTION[action["Context"]]["actions"][action["Action"]][
-                    "rating"
-                ].append(rate)
+                ACTION[action["Context"]]["actions"][action["Action"]]["itemID"].append(
+                    item
+                )
+                ACTION[action["Context"]]["actions"][action["Action"]]["userID"].append(
+                    user
+                )
+                ACTION[action["Context"]]["actions"][action["Action"]]["rating"].append(
+                    rate
+                )
 
         utils.save_files("context", CONTEXT)
         utils.save_files("action", ACTION)
