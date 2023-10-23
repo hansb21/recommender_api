@@ -16,6 +16,7 @@ def get_types():
         "rectypes": {
             0: "Popularity",
             1: {"Ranking": {0: "SVD", 1: "CoClustering", 2: "KNNBasic"}},
+            2: "Content-based",
         }
     }
 
@@ -23,11 +24,14 @@ def get_types():
 def get(
     Context: str,
     action: str,
-    userId: str,
     nresult: int,
     rectype: int,
     ratingtype: int = 0,
+    category: str = "",
+    userId: str = "",
+    itemId: str = "",
 ) -> None | dict | str:
+    print(category)
     if rectype == 0:
         return get_popRecommendation(Context, nresult, action)
 
@@ -35,7 +39,7 @@ def get(
         return get_ratingRecommendation(Context, nresult, action, userId, ratingtype)
 
     else:
-        pass
+        return get_contentBased(Context, itemId, nresult, category)
 
 
 def get_popRecommendation(Context: str, nresult: int, Action: str) -> None | str:
@@ -50,7 +54,7 @@ def get_popRecommendation(Context: str, nresult: int, Action: str) -> None | str
     # rating_count.set_index('itemID', inplace=True)
     tmp_result = rating_count.to_dict(orient="index")
     result = dict()
-    result["recommendationType"] = "2"
+    result["recommendationType"] = "0"
     result["Recommendation"] = {}
     for i in tmp_result:
         result["Recommendation"][f"itemID_{i}"] = tmp_result[i]["itemID"].strip("\n")
@@ -67,19 +71,46 @@ def get_ratingRecommendation(
     return_json["recommendationType"] = "1"
     return_json["ratingType"] = ratingtype
     return_json["Recommendation"] = {}
-    if Context in RECOMMENDATION.keys():
-        if Action in RECOMMENDATION[Context].keys():
-            if ratingtype in RECOMMENDATION[Context][Action].keys():
-                if userId in RECOMMENDATION[Context][Action][ratingtype].keys():
+    if Context in RECOMMENDATION["ranking"].keys():
+        if Action in RECOMMENDATION["ranking"][Context].keys():
+            if ratingtype in RECOMMENDATION["ranking"][Context][Action].keys():
+                if (
+                    userId
+                    in RECOMMENDATION["ranking"][Context][Action][ratingtype].keys()
+                ):
                     for item in range(
                         len(
-                            RECOMMENDATION[Context][Action][ratingtype][userId][
-                                :nresult
-                            ]
+                            RECOMMENDATION["ranking"][Context][Action][ratingtype][
+                                userId
+                            ][:nresult]
                         )
                     ):
                         return_json["Recommendation"][
                             f"itemID_{item}"
-                        ] = RECOMMENDATION[Context][Action][ratingtype][userId][item]
+                        ] = RECOMMENDATION["ranking"][Context][Action][ratingtype][
+                            userId
+                        ][
+                            item
+                        ]
                     print(return_json)
                     return return_json
+
+
+def get_contentBased(
+    Context: str, itemId: str, nresult: int, category: str
+) -> None | dict:
+    RECOMMENDATION = utils.open_files("recommendation")
+    result = dict()
+    result["recommendationType"] = "2"
+    result["category"] = category
+    result["Recommendation"] = {}
+
+    if Context in RECOMMENDATION["content"]:
+        if category in RECOMMENDATION["content"][Context]:
+            if itemId in RECOMMENDATION["content"][Context][category]:
+                for item in range(
+                    len(RECOMMENDATION["content"][Context][category][itemId])
+                ):
+                    result["Recommendation"][f"itemId_{item}"] = RECOMMENDATION[
+                        "content"
+                    ][Context][category][itemId][item]

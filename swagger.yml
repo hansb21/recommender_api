@@ -81,6 +81,20 @@ components:
       required: True
       schema:
         type: "integer"
+    ratingtype:
+      name: "ratingtype"
+      description: "type of algorithm of recommendation that will be used in raking type recommendation"
+      in: query
+      required: False
+      schema:
+        type: "integer"
+    category:
+      name: "category"
+      description: "category that will be used in content-based type recommendation"
+      in: query
+      required: False
+      schema:
+        type: "string"
   
   responses:
     NotFound:
@@ -468,29 +482,29 @@ paths:
         - api_key: []
 
   
-  /item/{Context}/{userId}/:
-    delete:
-      operationId: "item.deleteHistory"
-      tags: 
-      - "Item"
-      summary: "Deletes an user history"
-      parameters:
-        - $ref: "#/components/parameters/userId"
-        - $ref: "#/components/parameters/Context"
-      
-      responses:
-        "200":
-          description: "History deleted successfully"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "422":
-          $ref: "#/components/responses/UnprocessableEntity"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
-      security:
-        - api_key: []
+          #/item/{Context}/{userId}/:
+          #  delete:
+          #    operationId: "item.deleteHistory"
+          #    tags: 
+          #    - "Item"
+          #    summary: "Deletes an user history"
+          #    parameters:
+          #      - $ref: "#/components/parameters/userId"
+          #      - $ref: "#/components/parameters/Context"
+          #    
+          #    responses:
+          #      "200":
+          #        description: "History deleted successfully"
+          #      "400":
+          #        $ref: "#/components/responses/BadRequest"
+          #      "401":
+          #        $ref: "#/components/responses/Unauthorized"
+          #      "422":
+          #        $ref: "#/components/responses/UnprocessableEntity"
+          #      "500":
+          #        $ref: "#/components/responses/InternalServerError"
+          #    security:
+          #      - api_key: []
   /recommendation/:
     get:
       operationId: "recommendation.get_types"
@@ -511,7 +525,7 @@ paths:
       security:
         - api_key: []
 
-  /recommendation/{Context}/{userId}/{nresult}/{rectype}:
+  /recommendation/{Context}/{nresult}/{rectype}/{userId}/{itemId}:
     get:
       operationId: "recommendation.get"
       tags: 
@@ -522,6 +536,10 @@ paths:
         - $ref: "#/components/parameters/Context"
         - $ref: "#/components/parameters/nresult"
         - $ref: "#/components/parameters/rectype"
+        - $ref: "#/components/parameters/itemId"
+        - $ref: "#/components/parameters/category"
+        - $ref: "#/components/parameters/ratingtype"
+
       
       responses:
         "200":
