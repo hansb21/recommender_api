@@ -6,6 +6,12 @@ import pandas.core
 from surprise import Dataset, NormalPredictor, Reader
 from surprise.prediction_algorithms import predictions
 import utils
+from sklearn.metrics.pairwise import linear_kernel
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+RECOMMENDATION = dict()
+RECOMMENDATION["ranking"] = {}
+RECOMMENDATION["content"] = {}
 
 
 def get_top_n(predictions: list, n=10) -> defaultdict:
@@ -37,18 +43,16 @@ def get_top_n(predictions: list, n=10) -> defaultdict:
 
 def get_all_top_n() -> None:
     ACTION = utils.open_files("action")
-    RECOMMENDATION = dict()
     for c in ACTION.keys():
-        RECOMMENDATION[c] = {}
+        RECOMMENDATION["ranking"][c] = {}
         for a in ACTION[c]["actions"]:
-            RECOMMENDATION[c][a] = {}
+            RECOMMENDATION["ranking"][c][a] = {}
 
-            # for algo in [s
-            RECOMMENDATION[c][a] = {}
+            RECOMMENDATION["ranking"][c][a] = {}
             rating_df = pd.DataFrame(
                 ACTION[c]["actions"][a], columns=["userID", "itemID", "rating"]
             )
-            reader = Reader(rating_scale=(CONTEXT[c]["actions"][a]["scale"]))
+            reader = Reader(rating_scale=(ACTION[c]["actions"][a]["scale"]))
 
             print(rating_df)
             print(reader)
@@ -65,9 +69,11 @@ def get_all_top_n() -> None:
             predictions = algo.test(testset)
 
             top_n = get_top_n(predictions, n=10)
-            RECOMMENDATION[c][a][0] = {}
+            RECOMMENDATION["ranking"][c][a][0] = {}
             for uid, user_ratings in top_n.items():
-                RECOMMENDATION[c][a][0][uid] = [iid for (iid, _) in user_ratings]
+                RECOMMENDATION["ranking"][c][a][0][uid] = [
+                    iid for (iid, _) in user_ratings
+                ]
 
             # CoCLuresting
 
@@ -79,9 +85,11 @@ def get_all_top_n() -> None:
             predictions = algo.test(testset)
 
             top_n = get_top_n(predictions, n=10)
-            RECOMMENDATION[c][a][1] = {}
+            RECOMMENDATION["ranking"][c][a][1] = {}
             for uid, user_ratings in top_n.items():
-                RECOMMENDATION[c][a][1][uid] = [iid for (iid, _) in user_ratings]
+                RECOMMENDATION["ranking"][c][a][1][uid] = [
+                    iid for (iid, _) in user_ratings
+                ]
 
             # KNNBasic
             trainset = data.build_full_trainset()
@@ -92,11 +100,50 @@ def get_all_top_n() -> None:
             predictions = algo.test(testset)
 
             top_n = get_top_n(predictions, n=10)
-            RECOMMENDATION[c][a][2] = {}
+            RECOMMENDATION["ranking"][c][a][2] = {}
             for uid, user_ratings in top_n.items():
-                RECOMMENDATION[c][a][2][uid] = [iid for (iid, _) in user_ratings]
+                RECOMMENDATION["ranking"][c][a][2][uid] = [
+                    iid for (iid, _) in user_ratings
+                ]
 
     utils.save_files("recommendation", RECOMMENDATION)
 
 
+def content_based():
+    ITEM = utils.open_files("item")
+    for context in ITEM.keys():
+        RECOMMENDATION["content"][context] = {}
+        data = pd.DataFrame.from_dict(ITEM[context]["items"], orient="index")
+        for key, _ in data.items():
+            if key != "itemId" and key != "name":  # Ver sobre utilizar o nome ou não
+                # Remove palavras de parada, como "the", "and"
+                data_tfidf = TfidfVectorizer(stop_words="english")
+                data[key] = data[key].fillna("")
+                data_key_matrix = data_tfidf.fit_transform(
+                    data[key]
+                )  # Gera a matrix para calculo da similaridade do coseno
+
+                # print(data_key_matrix.shape)
+
+                similaridade_coseno = linear_kernel(data_key_matrix, data_key_matrix)
+                RECOMMENDATION["content"][context][key] = {}
+                for idx in range(data.shape[0]):
+                    RECOMMENDATION["content"][context][key][
+                        data["itemId"].iloc[idx]
+                    ] = []
+                    scores = list(enumerate(similaridade_coseno[idx]))
+                    scores = sorted(scores, key=lambda x: x[1], reverse=True)
+                    scores = scores[1:10]
+                    index = [i[0] for i in similaridade_coseno]
+                    for p in data["itemId"].iloc[index]:
+                        RECOMMENDATION["content"][context][key][
+                            data["itemId"].iloc[idx]
+                        ].append(p)
+                    #   print(p)
+                #        print(data["name"].iloc[index])
+    print(RECOMMENDATION)
+    utils.save_files("recommendation", RECOMMENDATION)
+
+
 get_all_top_n()
+content_based()
