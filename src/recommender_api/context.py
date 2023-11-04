@@ -19,7 +19,13 @@ def create(Context: dict) -> None | tuple:
             "actions": {},
             "items": {},
             "Metrics": [],
+            "Recommenders": {},
         }
+
+        for i in Context["recommenders"][0]:
+            CONTEXT[Context["Context"]]["Recommenders"][
+                Context["recommenders"][0][i]["id"]
+            ] = Context["recommenders"][0][i]["updateTime"]
 
         utils.save_files("context", CONTEXT)
     else:
