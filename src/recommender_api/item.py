@@ -6,6 +6,7 @@ from flask import abort
 CONTEXT, USER = utils.open_files()
 ITEM = utils.open_files("item")
 
+
 def create(item: dict) -> None | tuple:
     if item["Context"] in CONTEXT.keys():
         if item["Context"] not in ITEM.keys():
@@ -20,6 +21,7 @@ def create(item: dict) -> None | tuple:
 
     utils.save_files("item", ITEM)
 
+
 # Necessário ser refeita e refatorada para seguir o padrão
 def delete(Context: str, itemId: str) -> None | tuple:
     if Context in CONTEXT.keys() and Context in ITEM.keys():
@@ -30,12 +32,11 @@ def delete(Context: str, itemId: str) -> None | tuple:
     else:
         abort(422, f"Unprocessable Entity - Context {Context}dosen't exists")
 
-
     utils.save_files("action", ITEM)
     return (200, "Sucessfully deleted item")
 
 
-#ef deleteHistory(Context: str, userId: str) -> None | tuple:
+# ef deleteHistory(Context: str, userId: str) -> None | tuple:
 #   for itemId in CONTEXT[Context]["items"]:
 #       delete(Context, itemId)
 #   return (200, "Sucessfully deleted user history")

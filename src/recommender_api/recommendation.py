@@ -6,6 +6,7 @@ import heapq
 import pandas as pd
 import pandas.core
 from surprise import Dataset, NormalPredictor, Reader
+from . import adaptador_modelos
 
 CONTEXT = utils.open_files(file="context")
 ACTION = utils.open_files(file="action")
@@ -31,7 +32,6 @@ def get(
     userId: str = "",
     itemId: str = "",
 ) -> None | dict | str:
-    print(category)
     if rectype == 0:
         return get_popRecommendation(Context, nresult, action)
 
@@ -67,50 +67,19 @@ def get_ratingRecommendation(
     Context: str, nresult: int, Action: str, userId: str, ratingtype: int
 ) -> None | dict:
     RECOMMENDATION = utils.open_files("recommendation")
-    return_json = {}
-    return_json["recommendationType"] = "1"
-    return_json["ratingType"] = ratingtype
-    return_json["Recommendation"] = {}
-    if Context in RECOMMENDATION["ranking"].keys():
-        if Action in RECOMMENDATION["ranking"][Context].keys():
-            if ratingtype in RECOMMENDATION["ranking"][Context][Action].keys():
-                if (
-                    userId
-                    in RECOMMENDATION["ranking"][Context][Action][ratingtype].keys()
-                ):
-                    for item in range(
-                        len(
-                            RECOMMENDATION["ranking"][Context][Action][ratingtype][
-                                userId
-                            ][:nresult]
-                        )
-                    ):
-                        return_json["Recommendation"][
-                            f"itemID_{item}"
-                        ] = RECOMMENDATION["ranking"][Context][Action][ratingtype][
-                            userId
-                        ][
-                            item
-                        ]
-                    print(return_json)
-                    return return_json
+    return_json = adaptador_modelos.adapt_output(
+        RECOMMENDATION, Context, 1, Action=Action, userId=userId, ratingtype=ratingtype
+    )
+
+    return return_json
 
 
 def get_contentBased(
     Context: str, itemId: str, nresult: int, category: str
 ) -> None | dict:
     RECOMMENDATION = utils.open_files("recommendation")
-    result = dict()
-    result["recommendationType"] = "2"
-    result["category"] = category
-    result["Recommendation"] = {}
+    return_json = adaptador_modelos.adapt_output(
+        RECOMMENDATION, Context, 2, itemId=itemId, nresult=nresult, category=category
+    )
 
-    if Context in RECOMMENDATION["content"]:
-        if category in RECOMMENDATION["content"][Context]:
-            if itemId in RECOMMENDATION["content"][Context][category]:
-                for item in range(
-                    len(RECOMMENDATION["content"][Context][category][itemId])
-                ):
-                    result["Recommendation"][f"itemId_{item}"] = RECOMMENDATION[
-                        "content"
-                    ][Context][category][itemId][item]
+    return return_json
