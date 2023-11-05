@@ -43,24 +43,15 @@ def get(
 
 
 def get_popRecommendation(Context: str, nresult: int, Action: str) -> None | str:
-    df = pd.DataFrame(ACTION[Context]["actions"][Action], columns=["itemID", "ratings"])
-
-    df["Ratings_per_item"] = df.groupby("itemID")["itemID"].transform("count")
-    rating_count = pd.DataFrame(df, columns=["itemID", "Ratings_per_item"])
+    rating_count = adaptador_modelos.adapt_input(Context, 0, nresult, Action)
     rating_count.sort_values(
         "Ratings_per_item", ascending=False
     ).drop_duplicates().head(nresult)
 
-    # rating_count.set_index('itemID', inplace=True)
     tmp_result = rating_count.to_dict(orient="index")
-    result = dict()
-    result["recommendationType"] = "0"
-    result["Recommendation"] = {}
-    for i in tmp_result:
-        result["Recommendation"][f"itemID_{i}"] = tmp_result[i]["itemID"].strip("\n")
-
-    result = json.dumps(result)
-    return result
+    return_json = adaptador_modelos.adapt_output(tmp_result, Context, 0, nresult)
+    return_json = json.dumps(return_json)
+    return return_json
 
 
 def get_ratingRecommendation(

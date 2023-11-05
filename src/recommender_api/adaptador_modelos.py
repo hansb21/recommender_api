@@ -1,5 +1,43 @@
-def adapt_input():
-    pass
+import pandas as pd
+from surprise import Dataset, NormalPredictor, Reader
+from surprise.dataset import DatasetAutoFolds
+import utils
+
+
+def adapt_input(
+    Context: str,
+    rectype: int,
+    nresult: int = 10,
+    Action: str = "",
+    userId: str = "",
+    itemId: str = "",
+    ratingtype: int = -1,
+    category: str = "",
+) -> None | dict | pd.DataFrame | DatasetAutoFolds:
+    if rectype == 0:
+        ACTION = utils.open_files(file="action")
+        df = pd.DataFrame(
+            ACTION[Context]["actions"][Action], columns=["itemID", "ratings"]
+        )
+
+        df["Ratings_per_item"] = df.groupby("itemID")["itemID"].transform("count")
+
+        output_data = pd.DataFrame(df, columns=["itemID", "Ratings_per_item"])
+
+        return output_data
+
+    if rectype == 1:
+        ACTION = utils.open_files(file="action")
+        rating_df = pd.DataFrame(
+            ACTION[Context]["actions"][Action], columns=["userID", "itemID", "rating"]
+        )
+        reader = Reader(rating_scale=(ACTION[Context]["actions"][Action]["scale"]))
+
+        data = Dataset.load_from_df(rating_df[["userID", "itemID", "rating"]], reader)
+
+        return data
+    if rectype == 2:
+        pass
 
 
 def adapt_output(
@@ -14,7 +52,13 @@ def adapt_output(
     category: str = "",
 ) -> None | dict:
     if rectype == 0:
-        pass
+        result = dict()
+        result["recommendationType"] = "0"
+        result["Recommendation"] = {}
+        for i in data:
+            result["Recommendation"][f"itemID_{i}"] = data[i]["itemID"].strip("\n")
+
+        return result
 
     if rectype == 1:
         return_json = {}

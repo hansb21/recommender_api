@@ -8,6 +8,7 @@ from surprise.prediction_algorithms import predictions
 import utils
 from sklearn.metrics.pairwise import linear_kernel
 from sklearn.feature_extraction.text import TfidfVectorizer
+from . import adaptador_modelos
 
 RECOMMENDATION = dict()
 RECOMMENDATION["ranking"] = {}
@@ -49,16 +50,7 @@ def get_all_top_n() -> None:
             RECOMMENDATION["ranking"][c][a] = {}
 
             RECOMMENDATION["ranking"][c][a] = {}
-            rating_df = pd.DataFrame(
-                ACTION[c]["actions"][a], columns=["userID", "itemID", "rating"]
-            )
-            reader = Reader(rating_scale=(ACTION[c]["actions"][a]["scale"]))
-
-            print(rating_df)
-            print(reader)
-            data = Dataset.load_from_df(
-                rating_df[["userID", "itemID", "rating"]], reader
-            )
+            data = adaptador_modelos.adapt_input(c, 1, Action=a)
 
             # SDV
             trainset = data.build_full_trainset()
