@@ -7,7 +7,7 @@ CONTEXT, USER = utils.open_files()
 ITEM = utils.open_files("item")
 
 
-def create(item: dict) -> None | tuple:
+def register(item: dict) -> None | tuple:
     if item["Context"] in CONTEXT.keys():
         if item["Context"] not in ITEM.keys():
             ITEM[item["Context"]] = {}

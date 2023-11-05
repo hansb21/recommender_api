@@ -279,7 +279,7 @@ paths:
 
             #/action/{Context}/{Action}/{userId}/{itemId}/{actionValue}/{minScale}/{maxScale}:
     post:
-      operationId: "action.create"
+      operationId: "action.register"
       tags:
         - "Action"
       summary: "Create a new action that the user may use for recommendation"
@@ -436,7 +436,7 @@ paths:
   /item:
   #/{Context}/{userId}/{itemId}/{Action}:
      post:
-      operationId: "item.create"
+      operationId: "item.register"
       tags:
          - "Item"
       summary: "Created a new item used for recommendation"

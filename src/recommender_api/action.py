@@ -17,8 +17,7 @@ def read_all() -> dict:
     # return list(ACTION.values())
 
 
-def create(action: dict) -> None | tuple:
-    print(action)
+def register(action: dict) -> None | tuple:
     CONTEXT = utils.open_files(file="context")
     ACTION = utils.open_files(file="action")
     if action["Context"] in CONTEXT.keys():
