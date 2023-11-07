@@ -20,6 +20,7 @@ def create(Context: dict) -> None | tuple:
             "items": {},
             "Metrics": [],
             "Recommenders": {},
+            "item_schema": Context["item_schema"],
         }
 
         for i in Context["recommenders"][0]:

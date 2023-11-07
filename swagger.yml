@@ -172,6 +172,9 @@ paths:
                           updateTime: 
                             type: integer
                             format: int32
+                item_schema:
+                  type: string
+
 
               
         #parameters:
@@ -540,7 +543,7 @@ paths:
       security:
         - api_key: []
 
-  /recommendation/{Context}/{nresult}/{rectype}/{userId}/{itemId}:
+  /recommendation/{Context}/{nresult}/{rectype}/{userId}/{itemId}/{Action}:
     get:
       operationId: "recommendation.get"
       tags: 
@@ -548,6 +551,7 @@ paths:
       summary: "Returns an recommendation of a given type"
       parameters:
         - $ref: "#/components/parameters/userId"
+        - $ref: "#/components/parameters/Action"
         - $ref: "#/components/parameters/Context"
         - $ref: "#/components/parameters/nresult"
         - $ref: "#/components/parameters/rectype"

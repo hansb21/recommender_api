@@ -1,4 +1,3 @@
-# recommendation.py
 import utils
 import json
 from flask import Response, abort, jsonify
@@ -6,7 +5,7 @@ import heapq
 import pandas as pd
 import pandas.core
 from surprise import Dataset, NormalPredictor, Reader
-from . import adaptador_modelos
+import adaptador_modelos
 
 CONTEXT = utils.open_files(file="context")
 ACTION = utils.open_files(file="action")
@@ -24,7 +23,7 @@ def get_types():
 
 def get(
     Context: str,
-    action: str,
+    Action: str,
     nresult: int,
     rectype: int,
     ratingtype: int = 0,
@@ -33,10 +32,10 @@ def get(
     itemId: str = "",
 ) -> None | dict | str:
     if rectype == 0:
-        return get_popRecommendation(Context, nresult, action)
+        return get_popRecommendation(Context, nresult, Action)
 
     elif rectype == 1:
-        return get_ratingRecommendation(Context, nresult, action, userId, ratingtype)
+        return get_ratingRecommendation(Context, nresult, Action, userId, ratingtype)
 
     else:
         return get_contentBased(Context, itemId, nresult, category)

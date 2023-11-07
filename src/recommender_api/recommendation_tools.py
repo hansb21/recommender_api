@@ -8,7 +8,7 @@ from surprise.prediction_algorithms import predictions
 import utils
 from sklearn.metrics.pairwise import linear_kernel
 from sklearn.feature_extraction.text import TfidfVectorizer
-from . import adaptador_modelos
+import adaptador_modelos
 
 RECOMMENDATION = dict()
 RECOMMENDATION["ranking"] = {}
@@ -106,33 +106,101 @@ def content_based():
     for context in ITEM.keys():
         RECOMMENDATION["content"][context] = {}
         data = pd.DataFrame.from_dict(ITEM[context]["items"], orient="index")
-        for key, _ in data.items():
-            if key != "itemId" and key != "name":  # Ver sobre utilizar o nome ou não
-                # Remove palavras de parada, como "the", "and"
-                data_tfidf = TfidfVectorizer(stop_words="english")
-                data[key] = data[key].fillna("")
-                data_key_matrix = data_tfidf.fit_transform(
-                    data[key]
-                )  # Gera a matrix para calculo da similaridade do coseno
+        if ITEM[context]["item_schema"] == "Movie":
+            for key, _ in data.items():
+                if key in [
+                    "title",
+                    "description",
+                    "year",
+                    "tags",
+                    "director",
+                    "actors",
+                ]:
+                    # Remove palavras de parada, como "the", "and"
+                    data_tfidf = TfidfVectorizer(stop_words="english")
+                    data[key] = data[key].fillna("")
+                    data_key_matrix = data_tfidf.fit_transform(
+                        data[key]
+                    )  # Gera a matrix para calculo da similaridade do coseno
 
-                # print(data_key_matrix.shape)
+                    # print(data_key_matrix.shape)
 
-                similaridade_coseno = linear_kernel(data_key_matrix, data_key_matrix)
-                RECOMMENDATION["content"][context][key] = {}
-                for idx in range(data.shape[0]):
-                    RECOMMENDATION["content"][context][key][
-                        data["itemId"].iloc[idx]
-                    ] = []
-                    scores = list(enumerate(similaridade_coseno[idx]))
-                    scores = sorted(scores, key=lambda x: x[1], reverse=True)
-                    scores = scores[1:10]
-                    index = [i[0] for i in similaridade_coseno]
-                    for p in data["itemId"].iloc[index]:
+                    similaridade_coseno = linear_kernel(
+                        data_key_matrix, data_key_matrix
+                    )
+                    RECOMMENDATION["content"][context][key] = {}
+                    for idx in range(data.shape[0]):
                         RECOMMENDATION["content"][context][key][
                             data["itemId"].iloc[idx]
-                        ].append(p)
-                    #   print(p)
-                #        print(data["name"].iloc[index])
+                        ] = []
+                        scores = list(enumerate(similaridade_coseno[idx]))
+                        scores = sorted(scores, key=lambda x: x[1], reverse=True)
+                        scores = scores[1:10]
+                        index = [i[0] for i in similaridade_coseno]
+                        for p in data["itemId"].iloc[index]:
+                            RECOMMENDATION["content"][context][key][
+                                data["itemId"].iloc[idx]
+                            ].append(p)
+
+        if ITEM[context]["item_schema"] == "Book":
+            for key, _ in data.items():
+                if key in ["title", "description", "year", "tags", "author"]:
+                    # Remove palavras de parada, como "the", "and"
+                    data_tfidf = TfidfVectorizer(stop_words="english")
+                    data[key] = data[key].fillna("")
+                    data_key_matrix = data_tfidf.fit_transform(
+                        data[key]
+                    )  # Gera a matrix para calculo da similaridade do coseno
+
+                    # print(data_key_matrix.shape)
+
+                    similaridade_coseno = linear_kernel(
+                        data_key_matrix, data_key_matrix
+                    )
+                    RECOMMENDATION["content"][context][key] = {}
+                    for idx in range(data.shape[0]):
+                        RECOMMENDATION["content"][context][key][
+                            data["itemId"].iloc[idx]
+                        ] = []
+                        scores = list(enumerate(similaridade_coseno[idx]))
+                        scores = sorted(scores, key=lambda x: x[1], reverse=True)
+                        scores = scores[1:10]
+                        index = [i[0] for i in similaridade_coseno]
+                        for p in data["itemId"].iloc[index]:
+                            RECOMMENDATION["content"][context][key][
+                                data["itemId"].iloc[idx]
+                            ].append(p)
+
+        if ITEM[context]["item_schema"] == "Item":
+            for key, _ in data.items():
+                if key in ["title", "price", "dataAdded"]:
+                    # Remove palavras de parada, como "the", "and"
+                    data_tfidf = TfidfVectorizer(stop_words="english")
+                    data[key] = data[key].fillna("")
+
+                    data_key_matrix = data_tfidf.fit_transform(
+                        data[key]
+                    )  # Gera a matrix para calculo da similaridade do coseno
+
+                    # print(data_key_matrix.shape)
+
+                    similaridade_coseno = linear_kernel(
+                        data_key_matrix, data_key_matrix
+                    )
+                    RECOMMENDATION["content"][context][key] = {}
+                    for idx in range(data.shape[0]):
+                        RECOMMENDATION["content"][context][key][
+                            data["itemId"].iloc[idx]
+                        ] = []
+                        scores = list(enumerate(similaridade_coseno[idx]))
+                        scores = sorted(scores, key=lambda x: x[1], reverse=True)
+                        scores = scores[1:10]
+                        index = [i[0] for i in similaridade_coseno]
+                        for p in data["itemId"].iloc[index]:
+                            RECOMMENDATION["content"][context][key][
+                                data["itemId"].iloc[idx]
+                            ].append(p)
+
     print(RECOMMENDATION)
     utils.save_files("recommendation", RECOMMENDATION)
 
