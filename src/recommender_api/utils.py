@@ -48,6 +48,9 @@ def save_files(file, content):
     elif file == "item":
         with open("json/item.json", "w") as write_file:
             json.dump(content, write_file)
+    elif file == "security":
+        with open("json/auth.json", "w") as write_file:
+            json.dump(content, write_file)
 
 
 def get_timestamp():

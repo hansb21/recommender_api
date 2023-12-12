@@ -1,15 +1,15 @@
 # context.py
 import utils
 import json
-from flask import abort
-
+from flask import Response, abort, make_response
+import hashlib 
 
 def read_all() -> list:
     CONTEXT = utils.open_files(file="context")
     return list(CONTEXT.values())
 
 
-def create(Context: dict) -> None | tuple:
+def create(Context: dict) -> None | tuple | Response:
     CONTEXT = utils.open_files(file="context")
     if Context["Context"] not in CONTEXT:
         CONTEXT[Context["Context"]] = {
@@ -29,6 +29,15 @@ def create(Context: dict) -> None | tuple:
             ] = Context["recommenders"][0][i]["updateTime"]
 
         utils.save_files("context", CONTEXT)
+        TOKEN_DB = utils.open_files(file="security")
+        
+        token = hashlib.md5((Context["email"] + Context["name"] + CONTEXT[Context["Context"]]["timestamp"]).encode('utf-8'))
+        resp = make_response(f'{Context["Context"]} created sucefully')
+        resp.headers['X-Auth-Token'] = token.hexdigest()
+        TOKEN_DB[token.hexdigest()] = Context["email"]
+        utils.save_files("security")
+        return resp
+
     else:
         abort(422, f"Unprocessable Entity - Context {Context} already exists")
 

@@ -67,18 +67,20 @@ def adapt_output(
         return_json["Recommendation"] = {}
         if Context in data["ranking"].keys():
             if Action in data["ranking"][Context].keys():
-                if ratingtype in data["ranking"][Context][Action].keys():
-                    if userId in data["ranking"][Context][Action][ratingtype].keys():
+                if str(ratingtype) in data["ranking"][Context][Action].keys():
+                    print(userId)
+                    if userId in data["ranking"][Context][Action][str(ratingtype)].keys():
+                        print("entrou!")
                         for item in range(
                             len(
-                                data["ranking"][Context][Action][ratingtype][userId][
+                                data["ranking"][Context][Action][str(ratingtype)][userId][
                                     :nresult
                                 ]
                             )
                         ):
                             return_json["Recommendation"][f"itemID_{item}"] = data[
-                                "ranking"
-                            ][Context][Action][ratingtype][userId][item]
+                            "ranking"
+                        ][Context][Action][str(ratingtype)][userId][item]
                         return return_json
 
     else:

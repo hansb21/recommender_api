@@ -190,8 +190,6 @@ paths:
           $ref: "#/components/responses/UnprocessableEntity"
         "500":
           $ref: "#/components/responses/InternalServerError"
-      security:
-        - api_key: []
     
   /context/{Context}:
     delete:

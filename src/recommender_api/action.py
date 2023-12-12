@@ -39,16 +39,15 @@ def register(action: dict) -> None | tuple:
                     )
 
         for item in action["itemIds"][0]:
-            for user, rate in action["itemIds"][0][item][0].items():
-                ACTION[action["Context"]]["actions"][action["Action"]]["itemID"].append(
-                    item
-                )
-                ACTION[action["Context"]]["actions"][action["Action"]]["userID"].append(
-                    user
-                )
-                ACTION[action["Context"]]["actions"][action["Action"]]["rating"].append(
-                    rate
-                )
+            ACTION[action["Context"]]["actions"][action["Action"]]["itemID"].append(
+                item
+            )
+            ACTION[action["Context"]]["actions"][action["Action"]]["userID"].append(
+                action["itemIds"][0][item][0]["user"]
+            )
+            ACTION[action["Context"]]["actions"][action["Action"]]["rating"].append(
+                action["itemIds"][0][item][0]["ParameterValue"]
+            )
 
         utils.save_files("context", CONTEXT)
         utils.save_files("action", ACTION)

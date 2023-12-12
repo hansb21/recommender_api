@@ -67,8 +67,8 @@ def register(item: dict) -> None | tuple:
                         if key == "tags" and type(value) == list:
                             tags = ""
                             for v in value:
-                                tags +=  v + ","
-                            
+                                tags += v + ","
+
                             tags = tags[:-1]
 
                             ITEM[item["Context"]]["items"][i["itemId"]]["tags"] = tags

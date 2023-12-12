@@ -56,11 +56,12 @@ def get_popRecommendation(Context: str, nresult: int, Action: str) -> None | str
 def get_ratingRecommendation(
     Context: str, nresult: int, Action: str, userId: str, ratingtype: int
 ) -> None | dict:
+    print(Context)
     RECOMMENDATION = utils.open_files("recommendation")
     return_json = adaptador_modelos.adapt_output(
         RECOMMENDATION, Context, 1, Action=Action, userId=userId, ratingtype=ratingtype
     )
-
+    print(return_json)
     return return_json
 
 
